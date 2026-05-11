@@ -1,47 +1,16 @@
-name: Build Aziz Wind Tunnel APK
-
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main, master ]
-
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Python 3.11 o'rnatish
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Tizim paketlari
-      run: |
-        sudo apt-get update -qq
-        sudo apt-get install -y -qq \
-          git zip unzip openjdk-17-jdk \
-          autoconf libtool pkg-config zlib1g-dev \
-          libncurses5-dev libncursesw5-dev \
-          cmake libffi-dev libssl-dev \
-          build-essential lld
-
-    - name: Python paketlari
-      run: |
-        pip install --upgrade pip
-        pip install "cython==0.29.37" buildozer
-
     - name: APK yaratish
       env:
         USE_CCACHE: "0"
         CCACHE_DISABLE: "1"
         JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-      run: buildozer android debug 2>&1
+      run: |
+        buildozer android debug 2>&1 || (find . -name "*.log" | head -5 && exit 1)
 
-    - name: APK yuklash
+    - name: Xato log saqlash
+      if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: AzizWindTunnel-APK
-        path: bin/*.apk
-        if-no-files-found: error
+        name: build-logs
+        path: |
+          .buildozer/**/*.log
+        if-no-files-found: ignore
