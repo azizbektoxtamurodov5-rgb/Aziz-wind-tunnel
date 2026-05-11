@@ -1,16 +1,28 @@
-    - name: APK yaratish
-      env:
-        USE_CCACHE: "0"
-        CCACHE_DISABLE: "1"
-        JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-      run: |
-        buildozer android debug 2>&1 || (find . -name "*.log" | head -5 && exit 1)
+name: Build Aziz Wind Tunnel APK
 
-    - name: Xato log saqlash
-      if: failure()
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: APK yaratish (Kivy Docker)
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}:/home/user/hostcwd \
+          --workdir /home/user/hostcwd \
+          kivy/buildozer:latest \
+          android debug
+
+    - name: APK yuklash
       uses: actions/upload-artifact@v4
       with:
-        name: build-logs
-        path: |
-          .buildozer/**/*.log
-        if-no-files-found: ignore
+        name: AzizWindTunnel-APK
+        path: bin/*.apk
+        if-no-files-found: error
