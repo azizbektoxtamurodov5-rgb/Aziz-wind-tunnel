@@ -1,28 +1,47 @@
 name: Build Aziz Wind Tunnel APK
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main, master ]
-  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Kodni olish
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: APK yaratish
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          workdir: .
-          buildozer_version: stable
+    - name: Python 3.11 o'rnatish
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: APK ni saqlash
-        uses: actions/upload-artifact@v4
-        with:
-          name: AzizWindTunnel-APK
-          path: bin/*.apk
-          if-no-files-found: error
+    - name: Tizim paketlari
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq \
+          git zip unzip openjdk-17-jdk \
+          autoconf libtool pkg-config zlib1g-dev \
+          libncurses5-dev libncursesw5-dev \
+          cmake libffi-dev libssl-dev \
+          build-essential lld
+
+    - name: Python paketlari
+      run: |
+        pip install --upgrade pip
+        pip install "cython==0.29.37" buildozer
+
+    - name: APK yaratish
+      env:
+        USE_CCACHE: "0"
+        CCACHE_DISABLE: "1"
+        JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+      run: buildozer android debug 2>&1
+
+    - name: APK yuklash
+      uses: actions/upload-artifact@v4
+      with:
+        name: AzizWindTunnel-APK
+        path: bin/*.apk
+        if-no-files-found: error
