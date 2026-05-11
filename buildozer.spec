@@ -17,7 +17,7 @@ requirements = pygame
 
 android.permissions = CAMERA,RECORD_AUDIO,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
 android.api = 31
-android.minapi = 21
+android.minapi = 21 
 
 # 25b — buildozer tavsiya etgan versiya
 android.ndk = 21e
