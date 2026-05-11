@@ -1,0 +1,28 @@
+name: Build Aziz Wind Tunnel APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kodni olish
+        uses: actions/checkout@v4
+
+      - name: APK yaratish
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          workdir: .
+          buildozer_version: stable
+
+      - name: APK ni saqlash
+        uses: actions/upload-artifact@v4
+        with:
+          name: AzizWindTunnel-APK
+          path: bin/*.apk
+          if-no-files-found: error
