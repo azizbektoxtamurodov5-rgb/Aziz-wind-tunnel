@@ -14,7 +14,6 @@ version = 1.0
 requirements = pygame
 
 # p4a develop branch — barqaror va to'liq
-p4a.branch = develop
 
 android.permissions = CAMERA,RECORD_AUDIO,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
 android.api = 31
