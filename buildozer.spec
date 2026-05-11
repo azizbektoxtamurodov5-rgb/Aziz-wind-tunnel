@@ -11,7 +11,7 @@ source.main = main.py
 version = 1.0
 
 # pygame + numpy (p4a da ishlaydi, opencv kerak emas)
-requirements = python3,pygame,pillow
+requirements = pygame
 
 # p4a develop branch — barqaror va to'liq
 p4a.branch = develop
